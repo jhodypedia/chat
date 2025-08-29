@@ -1,0 +1,10 @@
+<div class="container-fluid vh-100 p-0 d-flex flex-column main-wrapper">
+    <div class="app-container d-flex flex-grow-1">
+        <%- include('partials/sidebar', { conversations, currentUser }) %>
+
+        <%- include('partials/chat-placeholder') %>
+        <%- include('partials/chat-window') %>
+    </div>
+</div>
+
+<input type="hidden" id="currentUserId" value="<%= currentUser.id %>">
