@@ -1,37 +1,61 @@
-// controllers/authController.js
-const bcrypt = require('bcryptjs');
-const db = require('../models/db'); // Asumsi koneksi db ada di sini
+const bcrypt = require('bcrypt');
+const { User } = require('../models');
 
-exports.getLogin = (req, res) => res.render('auth/login', { error: null });
-exports.getRegister = (req, res) => res.render('auth/register', { error: null });
+exports.showLoginPage = (req, res) => res.render('auth/login', { layout: false, error: null });
+exports.showRegisterPage = (req, res) => res.render('auth/register', { layout: false, error: null });
 
-exports.postRegister = async (req, res) => {
+exports.register = async (req, res) => {
+  try {
     const { username, email, password, no_hp } = req.body;
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.render('auth/register', { layout: false, error: 'Email sudah terdaftar.' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const sql = 'INSERT INTO users (username, email, password, no_hp) VALUES (?, ?, ?, ?)';
-    db.query(sql, [username, email, hashedPassword, no_hp], (err, result) => {
-        if (err) return res.render('auth/register', { error: 'Username atau email sudah digunakan.' });
+    await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      no_hp,
+      avatar: '/images/default-avatar.png',
+      about: 'Hey there! I am using this chat app.',
+      status_online: false,
+    });
+    res.redirect('/login');
+  } catch (error) {
+    res.render('auth/register', { layout: false, error: 'Terjadi kesalahan saat registrasi.' });
+  }
+};
+
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ where: { email } });
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.render('auth/login', { layout: false, error: 'Email atau password salah.' });
+        }
+
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            avatar: user.avatar,
+        };
+
+        // Update status online di DB
+        await User.update({ status_online: true }, { where: { id: user.id } });
+
+        res.redirect('/chat');
+    } catch (error) {
+        res.render('auth/login', { layout: false, error: 'Terjadi kesalahan saat login.' });
+    }
+};
+
+exports.logout = async (req, res) => {
+    if (req.session.user) {
+        await User.update({ status_online: false, last_seen: new Date() }, { where: { id: req.session.user.id } });
+    }
+    req.session.destroy(() => {
         res.redirect('/login');
     });
-};
-
-exports.postLogin = (req, res) => {
-    const { email, password } = req.body;
-    const sql = 'SELECT * FROM users WHERE email = ?';
-    db.query(sql, [email], async (err, results) => {
-        if (err || results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
-            return res.render('auth/login', { error: 'Email atau password salah.' });
-        }
-        req.session.userId = results[0].id;
-        req.session.username = results[0].username;
-        // Update status online di DB
-        db.query('UPDATE users SET status_online = TRUE WHERE id = ?', [results[0].id]);
-        res.redirect('/chat');
-    });
-};
-
-exports.logout = (req, res) => {
-    // Update status offline dan last_seen
-    db.query('UPDATE users SET status_online = FALSE, last_seen = NOW() WHERE id = ?', [req.session.userId]);
-    req.session.destroy(() => res.redirect('/login'));
 };
