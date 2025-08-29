@@ -1,0 +1,33 @@
+<div class="sidebar d-flex flex-column">
+    <header class="sidebar-header d-flex justify-content-between align-items-center p-3">
+        <img src="<%= currentUser.avatar %>" alt="Avatar" class="avatar rounded-circle">
+        <div class="sidebar-actions">
+            <i class="bi bi-moon-stars-fill" id="darkModeToggle"></i>
+            <a href="/logout"><i class="bi bi-box-arrow-right"></i></a>
+        </div>
+    </header>
+    <div class="sidebar-search p-3">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchInput" placeholder="Cari atau mulai chat baru">
+        </div>
+         <div id="searchResults" class="search-results-list"></div>
+    </div>
+    <div class="conversation-list flex-grow-1">
+        <% conversations.forEach(convo => { %>
+            <div class="conversation-item d-flex align-items-center p-3" data-user-id="<%= convo.user.id %>">
+                <div class="position-relative">
+                    <img src="<%= convo.user.avatar %>" alt="Avatar" class="avatar rounded-circle me-3">
+                    <span class="status-dot" id="status-<%= convo.user.id %>"></span>
+                </div>
+                <div class="conversation-details flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="mb-0"><%= convo.user.username %></h6>
+                        <small class="text-muted"><%= new Date(convo.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
+                    </div>
+                    <p class="text-muted mb-0 text-truncate"><%= convo.lastMessage %></p>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
