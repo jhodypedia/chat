@@ -1,0 +1,57 @@
+/* General & Dark Mode */
+:root {
+    --bg-color: #f0f2f5;
+    --text-color: #000;
+    --sidebar-bg: #fff;
+    --chat-bg: #e5ddd5;
+    --bubble-sent-bg: #dcf8c6;
+    --bubble-received-bg: #fff;
+    --primary-color: #0d6efd;
+    --hover-bg: #f5f5f5;
+}
+
+body.dark-mode {
+    --bg-color: #111b21;
+    --text-color: #e4e6eb;
+    --sidebar-bg: #202c33;
+    --chat-bg: #0b141a;
+    --bubble-sent-bg: #005c4b;
+    --bubble-received-bg: #202c33;
+    --primary-color: #00a884;
+    --hover-bg: #2a3942;
+}
+/* ... (tambahkan style untuk layout utama, sidebar, chat, bubble, animasi typing, shimmer) ... */
+
+/* Animasi Typing Indicator */
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #9E9E9E;
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+.typing-indicator span:nth-of-type(2) { animation-delay: -0.32s; }
+.typing-indicator span:nth-of-type(3) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+/* Shimmer Effect Skeleton */
+.skeleton {
+    animation: shimmer 1.5s infinite linear;
+    background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+    background-size: 1000px 100%;
+}
+body.dark-mode .skeleton {
+    background: linear-gradient(to right, #2a3942 4%, #3a4a55 25%, #2a3942 36%);
+    background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
