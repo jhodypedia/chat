@@ -1,0 +1,22 @@
+<div class="chat-area d-none flex-column" id="chatWindow">
+    <header class="chat-header d-flex align-items-center p-3">
+        <img src="/images/default-avatar.png" alt="Avatar" id="chatAvatar" class="avatar rounded-circle me-3">
+        <div>
+            <h6 class="mb-0" id="chatUsername">Nama User</h6>
+            <small class="text-muted" id="chatStatus">online</small>
+        </div>
+    </header>
+    <div class="chat-messages flex-grow-1 p-4" id="chatMessages">
+       </div>
+    <div class="typing-indicator-container px-4 pb-2 d-none" id="typingIndicator">
+        <div class="typing-indicator">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+    <footer class="chat-input p-3 bg-light">
+        <form id="messageForm" class="d-flex">
+            <input type="text" id="messageInput" class="form-control" placeholder="Ketik pesan..." autocomplete="off">
+            <button type="submit" class="btn btn-primary ms-2"><i class="bi bi-send-fill"></i></button>
+        </form>
+    </footer>
+</div>
